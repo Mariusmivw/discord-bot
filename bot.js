@@ -52,8 +52,8 @@ bot.on("message", function(msg){
       case "delete":
         if (txt == channel.name) {
           clearInterval(privateChannels[`<#${channel.id}>`].interval);
-          delete privateChannels[`<#${channel.id}>`];
           privateChannels[`<#${channel.id}>`].creator.privatesLeft += 1;
+          delete privateChannels[`<#${channel.id}>`];
           channel.delete();
         }
         break;
