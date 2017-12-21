@@ -17,39 +17,46 @@ bot.on("message", function(msg){
   var author = msg.author;
   var aId = author.id;
 
-  if (author.isResponding){
-    switch (`${author.respondTo}_${author.respondIn}`) {
-      case `create_${channel}`:
-      guild.createChannel(txt.replace(" ", "-"), 'text')
-      .then(console.log(`${author} (${aId}) tried to make a private channel`))
-      .then(channel => setTimeout(function(){
-        console.log(`Created new channel ${channel} at ${channel.createdAt}`);
+  if (author.privatesLeft == undefined || author.privatesLeft == null) {
+    author.privatesLeft = 1;
+  }
 
-        var notifyInterval = 15;
-        privateChannels[channel] = {};
-        privateChannels[channel].channel = channel;
-        privateChannels[channel].roomTime = 60;
-        privateChannels[channel].extendTime = 30;
-        privateChannels[channel].extendsLeft = 2;
+  if (author.isResponding && author.respondIn == channel) {
+    switch (author.respondTo) {
+      case "create":
+        guild.createChannel(txt.replace(" ", "-"), 'text')
+        .then(console.log(`${author} (${aId}) tried to make a private channel`))
+        .then(channel => setTimeout(function(){
+          console.log(`Created new channel ${channel} at ${channel.createdAt}`);
+          author.privatesLeft -= 1;
 
-        channel.send(`This channel will be deleted after ${privateChannels[channel].roomTime} minutes, you can extend this by ${privateChannels[channel].extendTime} minutes ${privateChannels[channel].extendsLeft} times.`);
+          var notifyInterval = 15;
+          privateChannels[channel] = {};
+          privateChannels[channel].creator = author;
+          privateChannels[channel].channel = channel;
+          privateChannels[channel].roomTime = 60;
+          privateChannels[channel].extendTime = 30;
+          privateChannels[channel].extendsLeft = 2;
 
-        privateChannels[channel].interval = setInterval(function(){
-          privateChannels[channel].roomTime -= notifyInterval;
-          channel.send(`${privateChannels[channel].roomTime} minutes and ${privateChannels[channel].extendsLeft} time-extender(s) left`);
-        }, (1000 * 60 * notifyInterval));
+          channel.send(`This channel will be deleted after ${privateChannels[channel].roomTime} minutes, you can extend this by ${privateChannels[channel].extendTime} minutes ${privateChannels[channel].extendsLeft} times.`);
 
-      }))
-      .catch(console.error);
-      break;
+          privateChannels[channel].interval = setInterval(function(){
+            privateChannels[channel].roomTime -= notifyInterval;
+            channel.send(`${privateChannels[channel].roomTime} minutes and ${privateChannels[channel].extendsLeft} time-extender(s) left`);
+          }, (1000 * 60 * notifyInterval));
 
-      case `delete_${channel}`:
-      if (txt == channel.name) {
-        clearInterval(privateChannels[`<#${channel.id}>`].interval);
-        delete privateChannels[`<#${channel.id}>`];
-        channel.delete();
-      }
-      break;
+        }))
+        .catch(console.error);
+        break;
+
+      case "delete":
+        if (txt == channel.name) {
+          clearInterval(privateChannels[`<#${channel.id}>`].interval);
+          delete privateChannels[`<#${channel.id}>`];
+          privateChannels[`<#${channel.id}>`].creator.privatesLeft += 1;
+          channel.delete();
+        }
+        break;
     }
     if (channel == author.respondIn){
       delete author.isResponding;
@@ -81,14 +88,14 @@ bot.on("message", function(msg){
     txt = txt.slice(prefix.length);
     switch (txt) {
       case "ping":
-      msg.reply("Pong!");
-      break;
+        msg.reply("Pong!");
+        break;
 
       default:
-      if (public){
-        publicCommands();
-      }
-      break;
+        if (public){
+          publicCommands();
+        }
+        break;
     }
   }
 
@@ -96,12 +103,14 @@ bot.on("message", function(msg){
     txt = txt.slice(prefix.length);
     switch (txt) {
       case "create":
-      channel.send("Please enter a name for the channel")
-      .then(author.isResponding = true)
-      .then(author.respondTo = txt)
-      .then(author.respondIn = channel)
-      .catch(console.error);
-      break;
+        if (author.privatesLeft > 0) {
+          channel.send("Please enter a name for the channel")
+          .then(author.isResponding = true)
+          .then(author.respondTo = txt)
+          .then(author.respondIn = channel)
+          .catch(console.error);
+        }
+        break;
     }
   }
 
@@ -109,26 +118,26 @@ bot.on("message", function(msg){
     txt = txt.slice(prefix.length);
     switch (txt) {
       case "extend":
-      if (privateChannels[`<#${channel.id}>`].extendsLeft > 0){
-        privateChannels[`<#${channel.id}>`].roomTime += privateChannels[`<#${channel.id}>`].extendTime;
-        privateChannels[`<#${channel.id}>`].extendsLeft -= 1;
-        channel.send(`You've delayed the deletion of ***${channel.name}*** by ${privateChannels[`<#${channel.id}>`].extendTime} minutes to ${privateChannels[`<#${channel.id}>`].roomTime} minutes, you have ${privateChannels[`<#${channel.id}>`].extendsLeft} time-extender(s) left`)
-      }
-      else{
-        channel.send(`It looks like you've used all of your time-extenders, ***${channel.name}*** will be deleted in ${privateChannels[`<#${channel.id}>`].roomTime}`);
-      }
+        if (privateChannels[`<#${channel.id}>`].extendsLeft > 0){
+          privateChannels[`<#${channel.id}>`].roomTime += privateChannels[`<#${channel.id}>`].extendTime;
+          privateChannels[`<#${channel.id}>`].extendsLeft -= 1;
+          channel.send(`You've delayed the deletion of ***${channel.name}*** by ${privateChannels[`<#${channel.id}>`].extendTime} minutes to ${privateChannels[`<#${channel.id}>`].roomTime} minutes, you have ${privateChannels[`<#${channel.id}>`].extendsLeft} time-extender(s) left`)
+        }
+        else{
+          channel.send(`It looks like you've used all of your time-extenders, ***${channel.name}*** will be deleted in ${privateChannels[`<#${channel.id}>`].roomTime}`);
+        }
       break;
 
       case "delete":
-      channel.send(`Are you sure you want to delete ***${channel.name}***? Type '${channel.name}' to confirm deletion.`);
-      author.isResponding = true;
-      author.respondTo = txt;
-      author.respondIn = channel;
-      break;
+        channel.send(`Are you sure you want to delete ***${channel.name}***? Type '${channel.name}' to confirm deletion.`);
+        author.isResponding = true;
+        author.respondTo = txt;
+        author.respondIn = channel;
+        break;
 
       default:
-      commands(false);
-      break;
+        commands(false);
+        break;
     }
   }
 });
