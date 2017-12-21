@@ -1,1 +1,1 @@
-DiscordJS: node bot.js 
+DiscordJS: node bot.js
