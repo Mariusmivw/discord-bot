@@ -3,10 +3,6 @@ const bot = new Discord.Client();
 const prefix = "";
 var privateChannels = {};
 
-server.connection({
-  port: process.env.PORT || 3000
-});
-
 bot.login("MzkyNjU3MzA4NTg2MzQ0NDU5.DRqaMA.ZcrlbfL6FzKJEQSUsrufPbIGX8U");
 
 bot.on("ready", function(){
