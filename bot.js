@@ -3,11 +3,10 @@ const bot = new Discord.Client();
 const prefix = "";
 var privateChannels = {};
 
-bot.login("MzkyNjU3MzA4NTg2MzQ0NDU5.DRqaMA.ZcrlbfL6FzKJEQSUsrufPbIGX8U");
+bot.login(process.env.TOKEN); //"MzkyNjU3MzA4NTg2MzQ0NDU5.DRqaMA.ZcrlbfL6FzKJEQSUsrufPbIGX8U"
 
 bot.on("ready", function(){
   console.log(`Logged in as ${bot.user.tag}!`);
-  var keepFromSleeping = setInterval(function(){console.log("kept app from going down");}, 1000 * 60 * 20);
 });
 
 bot.on("message", function(msg){

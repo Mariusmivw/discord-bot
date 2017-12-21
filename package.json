@@ -1,17 +1,22 @@
 {
   "name": "discord-bot",
   "version": "1.0.0",
-  "description": "",
+  "description": "My discord.js bot",
+  "engines": {
+    "node": "latest",
+    "npm": "latest"
+  },
   "main": "bot.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "Do not put a start script here",
+    "test": "nf run nodemon bot.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mariusmivw/discord-bot.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Marius van Wijk (Mariusmivw)",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/mariusmivw/discord-bot/issues"
