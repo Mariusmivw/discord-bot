@@ -3,7 +3,7 @@ const bot = new Discord.Client();
 const prefix = "";
 var privateChannels = {};
 
-bot.login(process.env.TOKEN); //"MzkyNjU3MzA4NTg2MzQ0NDU5.DRqaMA.ZcrlbfL6FzKJEQSUsrufPbIGX8U"
+bot.login("MzkyNjU3MzA4NTg2MzQ0NDU5.DRqaMA.ZcrlbfL6FzKJEQSUsrufPbIGX8U");
 
 bot.on("ready", function(){
   console.log(`Logged in as ${bot.user.tag}!`);
