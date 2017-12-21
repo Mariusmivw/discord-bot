@@ -10,13 +10,13 @@ bot.on("ready", function(){
 });
 
 bot.on("message", function(msg){
-  
+
   var guild = msg.guild;
   var channel = msg.channel;
   var txt = msg.content;
   var author = msg.author;
   var aId = author.id;
-  
+
   if (author.isResponding){
     switch (`${author.respondTo}_${author.respondIn}`) {
       case `create_${channel}`:
@@ -24,25 +24,25 @@ bot.on("message", function(msg){
       .then(console.log(`${author} (${aId}) tried to make a private channel`))
       .then(channel => setTimeout(function(){
         console.log(`Created new channel ${channel} at ${channel.createdAt}`);
-        
+
         var notifyInterval = 15;
         privateChannels[channel] = {};
         privateChannels[channel].channel = channel;
         privateChannels[channel].roomTime = 60;
         privateChannels[channel].extendTime = 30;
         privateChannels[channel].extendsLeft = 2;
-        
+
         channel.send(`This channel will be deleted after ${privateChannels[channel].roomTime} minutes, you can extend this by ${privateChannels[channel].extendTime} minutes ${privateChannels[channel].extendsLeft} times.`);
-        
+
         privateChannels[channel].interval = setInterval(function(){
           privateChannels[channel].roomTime -= notifyInterval;
           channel.send(`${privateChannels[channel].roomTime} minutes and ${privateChannels[channel].extendsLeft} time-extender(s) left`);
         }, (1000 * 60 * notifyInterval));
-        
+
       }))
       .catch(console.error);
       break;
-      
+
       case `delete_${channel}`:
       if (txt == channel.name) {
         clearInterval(privateChannels[`<#${channel.id}>`].interval);
@@ -65,25 +65,25 @@ bot.on("message", function(msg){
       commands();
     }
   }
-  
-  
-  
-  
-  //      ______                 __  _                 
+
+
+
+
+  //      ______                 __  _
   //     / ____/_  ______  _____/ /_(_)___  ____  _____
   //    / /_  / / / / __ \/ ___/ __/ / __ \/ __ \/ ___/
-  //   / __/ / /_/ / / / / /__/ /_/ / /_/ / / / (__  ) 
-  //  /_/    \__,_/_/ /_/\___/\__/_/\____/_/ /_/____/  
-  //                                                   
-  
-  
+  //   / __/ / /_/ / / / / /__/ /_/ / /_/ / / / (__  )
+  //  /_/    \__,_/_/ /_/\___/\__/_/\____/_/ /_/____/
+  //
+
+
   function commands(public = true){
     txt = txt.slice(prefix.length);
     switch (txt) {
       case "ping":
       msg.reply("Pong!");
       break;
-      
+
       default:
       if (public){
         publicCommands();
@@ -91,7 +91,7 @@ bot.on("message", function(msg){
       break;
     }
   }
-  
+
   function publicCommands(){
     txt = txt.slice(prefix.length);
     switch (txt) {
@@ -104,7 +104,7 @@ bot.on("message", function(msg){
       break;
     }
   }
-  
+
   function privateCommands(){
     txt = txt.slice(prefix.length);
     switch (txt) {
@@ -118,14 +118,14 @@ bot.on("message", function(msg){
         channel.send(`It looks like you've used all of your time-extenders, ***${channel.name}*** will be deleted in ${privateChannels[`<#${channel.id}>`].roomTime}`);
       }
       break;
-      
+
       case "delete":
       channel.send(`Are you sure you want to delete ***${channel.name}***? Type '${channel.name}' to confirm deletion.`);
       author.isResponding = true;
       author.respondTo = txt;
       author.respondIn = channel;
       break;
-      
+
       default:
       commands(false);
       break;
