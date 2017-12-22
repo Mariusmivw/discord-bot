@@ -90,18 +90,12 @@ bot.on("message", function(msg){
       case "ping":
         msg.reply("Pong!");
         break;
-<<<<<<< HEAD
 	
 	  case "stop":
 	    channel.send("Stopping");
 		bot.destroy(function(err){console.log(err)});
 	    setTimeout(function(){process.exit();},500);
 		break;
-=======
-        
-      case "stop":
-				exit();
->>>>>>> a6deec71b5cbc8a9f0396a39b87c890c59f94f64
 
       default:
         if (public){
