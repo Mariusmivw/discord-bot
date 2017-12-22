@@ -1,6 +1,6 @@
 const Discord = require("discord.js");
 const bot = new Discord.Client();
-const prefix = "";
+const prefix = "/";
 var privateChannels = {};
 
 bot.login("MzkyNjU3MzA4NTg2MzQ0NDU5.DRqaMA.ZcrlbfL6FzKJEQSUsrufPbIGX8U");
@@ -100,13 +100,13 @@ bot.on("message", function(msg){
 
       default:
         if (public){
-          publicCommands();
+          publicCommands(`${prefix}${txt}`);
         }
         break;
     }
   }
 
-  function publicCommands(){
+  function publicCommands(txt){
     txt = txt.slice(prefix.length);
     switch (txt) {
       case "create":
@@ -115,7 +115,10 @@ bot.on("message", function(msg){
             .then(author.isResponding = true)
             .then(author.respondTo = txt)
             .then(author.respondIn = channel)
-          .catch(console.error);
+            .catch(console.error);
+        }
+        else {
+            channel.send("You are at your maximum amount of private channels.");
         }
         break;
     }
