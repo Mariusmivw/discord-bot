@@ -90,6 +90,9 @@ bot.on("message", function(msg){
       case "ping":
         msg.reply("Pong!");
         break;
+        
+      case "stop":
+				exit();
 
       default:
         if (public){
