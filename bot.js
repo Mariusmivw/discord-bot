@@ -25,28 +25,28 @@ bot.on("message", function(msg){
     switch (author.respondTo) {
       case "create":
         guild.createChannel(txt.replace(" ", "-"), 'text')
-        .then(console.log(`${author} (${aId}) tried to make a private channel`))
-        .then(channel => setTimeout(function(){
-          console.log(`Created new channel ${channel} at ${channel.createdAt}`);
-          author.privatesLeft -= 1;
+          .then(console.log(`${author} (${aId}) tried to make a private channel`))
+          .then(channel => setTimeout(function(){
+            console.log(`Created new channel ${channel} at ${channel.createdAt}`);
+            author.privatesLeft -= 1;
 
-          var notifyInterval = 15;
-          privateChannels[channel] = {};
-          privateChannels[channel].creator = author;
-          privateChannels[channel].channel = channel;
-          privateChannels[channel].roomTime = 60;
-          privateChannels[channel].extendTime = 30;
-          privateChannels[channel].extendsLeft = 2;
+            var notifyInterval = 15;
+            privateChannels[channel] = {};
+            privateChannels[channel].creator = author;
+            privateChannels[channel].channel = channel;
+            privateChannels[channel].roomTime = 60;
+            privateChannels[channel].extendTime = 30;
+            privateChannels[channel].extendsLeft = 2;
 
-          channel.send(`This channel will be deleted after ${privateChannels[channel].roomTime} minutes, you can extend this by ${privateChannels[channel].extendTime} minutes ${privateChannels[channel].extendsLeft} times.`);
+            channel.send(`This channel will be deleted after ${privateChannels[channel].roomTime} minutes, you can extend this by ${privateChannels[channel].extendTime} minutes ${privateChannels[channel].extendsLeft} times.`);
 
-          privateChannels[channel].interval = setInterval(function(){
-            privateChannels[channel].roomTime -= notifyInterval;
-            channel.send(`${privateChannels[channel].roomTime} minutes and ${privateChannels[channel].extendsLeft} time-extender(s) left`);
-          }, (1000 * 60 * notifyInterval));
+            privateChannels[channel].interval = setInterval(function(){
+             privateChannels[channel].roomTime -= notifyInterval;
+              channel.send(`${privateChannels[channel].roomTime} minutes and ${privateChannels[channel].extendsLeft} time-extender(s) left`);
+            }, (1000 * 60 * notifyInterval));
 
-        }))
-        .catch(console.error);
+          }))
+          .catch(console.error);
         break;
 
       case "delete":
@@ -90,6 +90,12 @@ bot.on("message", function(msg){
       case "ping":
         msg.reply("Pong!");
         break;
+	
+	  case "stop":
+	    channel.send("Stopping");
+		bot.destroy(function(err){console.log(err)});
+	    setTimeout(function(){process.exit();},500);
+		break;
 
       default:
         if (public){
@@ -105,9 +111,9 @@ bot.on("message", function(msg){
       case "create":
         if (author.privatesLeft > 0) {
           channel.send("Please enter a name for the channel")
-          .then(author.isResponding = true)
-          .then(author.respondTo = txt)
-          .then(author.respondIn = channel)
+            .then(author.isResponding = true)
+            .then(author.respondTo = txt)
+            .then(author.respondIn = channel)
           .catch(console.error);
         }
         break;
