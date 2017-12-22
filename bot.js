@@ -7,6 +7,7 @@ bot.login("MzkyNjU3MzA4NTg2MzQ0NDU5.DRqaMA.ZcrlbfL6FzKJEQSUsrufPbIGX8U");
 
 bot.on("ready", function(){
   console.log(`Logged in as ${bot.user.tag}!`);
+  var keepActive = setInterval(function(){console.log("I don't want to go to bed!!!");}, 1000 * 60 * 90); //keep from idle on c9.io
 });
 
 bot.on("message", function(msg){
@@ -90,7 +91,7 @@ bot.on("message", function(msg){
       case "ping":
         msg.reply("Pong!");
         break;
-	
+
 	  case "stop":
 	    channel.send("Stopping");
 		bot.destroy(function(err){console.log(err)});
