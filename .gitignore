@@ -1,6 +1,6 @@
-#custom_stuff
-bot.js
-test.js
+# Custom Stuff
+# bot.js
+# test.js
 
 # Logs
 logs
@@ -60,4 +60,3 @@ typings/
 
 # dotenv environment variables file
 .env
-
