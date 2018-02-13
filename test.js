@@ -1,9 +1,11 @@
+const dotenv = require("dotenv/config");
+
 const Discord = require("discord.js");
 const bot = new Discord.Client();
 const prefix = "/";
 var privateChannels = {};
 
-bot.login("MzkyNjU3MzA4NTg2MzQ0NDU5.DRqaMA.ZcrlbfL6FzKJEQSUsrufPbIGX8U");
+/*bot.login*/console.log(process.env.TOKEN);
 
 bot.on("ready", function(){
   console.log(`Logged in as ${bot.user.tag}!`);
